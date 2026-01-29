@@ -161,81 +161,58 @@ function getSheetUrl() {
 }
 
 async function loadProducts() {
-  const url = getSheetUrl();
-  const response = await fetch(url);
+      const response = await fetch(getSheetUrl());
+      const text = await response.text();
+      const rows = text.split("\n").map(r => r.split(","));
+      const products = {};
+      rows.slice(1).forEach(r => {
+        if (r.length >= 7 && r[0]) {
+          const id = r[0];
+          products[id] = {
+            name: r[1],
+            image: r[2],
+            us: r[3],
+            ca: r[4],
+            uk: r[5],
+            de: r[6]
+          };
+        }
+      });
+      return products;
+    }
 
-  if (!response.ok) {
-    throw new Error("Failed to load products. Make sure the Google Sheet is published to web.");
-  }
-
-  const text = await response.text();
-  const rows = text.split("\n").map(r => {
-    // Handle CSV parsing with potential commas in values
-    const result = [];
-    let current = '';
-    let inQuotes = false;
-
-    for (let i = 0; i < r.length; i++) {
-      const char = r[i];
-      if (char === '"') {
-        inQuotes = !inQuotes;
-      } else if (char === ',' && !inQuotes) {
-        result.push(current.trim());
-        current = '';
-      } else {
-        current += char;
+    async function searchProduct() {
+      const id = document.getElementById("productId").value.trim();
+      const resultArea = document.getElementById("resultArea");
+      if (!id) {
+        resultArea.innerHTML = `<p class="error">Please enter a Product ID.</p>`;
+        return;
+      }
+      resultArea.innerHTML = `<p class="loading">Searching...</p>`;
+      try {
+        const products = await loadProducts();
+        const product = products[id];
+        if (product) {
+          resultArea.innerHTML = `
+            <div class="result">
+              <h3>Product ID ${id}</h3>
+              <img src="${product.image}" alt="${product.name}">
+              <div><strong>${product.name}</strong></div>
+              <a class="buy-btn" href="${product.us}" target="_blank">Buy on Amazon.com</a>
+              <a class="buy-btn" href="${product.ca}" target="_blank">Buy on Amazon.ca</a>
+              <a class="buy-btn" href="${product.uk}" target="_blank">Buy on Amazon.co.uk</a>
+              <a class="buy-btn" href="${product.de}" target="_blank">Buy on Amazon.de</a>
+            </div>
+          `;
+        } else {
+          resultArea.innerHTML = `<p class="error">Product not found. Please check the ID.</p>`;
+        }
+      } catch (error) {
+        resultArea.innerHTML = `<p class="error">Error loading products: ${error.message}</p>`;
       }
     }
-    result.push(current.trim());
-    return result;
-  });
-
-  const products = {};
-  rows.slice(1).forEach(r => {
-    if (r.length >= 4 && r[0]) {
-      const id = r[0];
-      products[id] = {
-        name: r[1],
-        image: r[2],
-        link: r[3]
-      };
-    }
-  });
-  return products;
-}
-
-async function searchProduct() {
-  const id = document.getElementById("productId").value.trim();
-  const resultArea = document.getElementById("resultArea");
-
-  if (!id) {
-    resultArea.innerHTML = `<p class="error">Please enter a Product ID.</p>`;
-    return;
-  }
-
-  resultArea.innerHTML = `<p class="loading">Searching...</p>`;
-
-  try {
-    const products = await loadProducts();
-    const product = products[id];
-
-    if (product) {
-      resultArea.innerHTML = `
-        <div class="result">
-          <h3>Product ID ${id}</h3>
-          <img src="${product.image}" alt="${product.name}">
-          <div><strong>${product.name}</strong></div>
-          <a class="buy-btn" href="${product.link}" target="_blank">Buy Now</a>
-        </div>
-      `;
-    } else {
-      resultArea.innerHTML = `<p class="error">Product not found. Please check the ID.</p>`;
-    }
-  } catch (error) {
-    resultArea.innerHTML = `<p class="error">Error loading products: ${error.message}</p>`;
-  }
-}
-</script>
+  </script>
 
 </body>
 </html>
+
