@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ClickThatLinks</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #fdf8f3;
+      text-align: center;
+      padding: 40px;
+    }
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .tagline {
+      font-size: 16px;
+      color: #555;
+      margin-bottom: 30px;
+    }
+    input[type="text"] {
+      padding: 10px;
+      width: 250px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #fdd835;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 30px;
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: #fff;
+      display: inline-block;
+    }
+    .result img {
+      width: 150px;
+      margin-bottom: 10px;
+    }
+    .buy-btn {
+      display: block;
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #e53935;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logo">CLICKTHATLINKS</div>
+  <div class="tagline">Find your product fast</div>
+
+  <input type="text" id="productId" placeholder="Enter Product ID">
+  <button onclick="searchProduct()">Search</button>
+
+  <div id="resultArea"></div>
+
+  <script>
+async function loadProducts() {
+  const url = "https://docs.google.com/spreadsheets/d/1mA0IUMZ5CeR_SEkuBZLetdpuUlyttcaSQEaTbHkp9Io/edit?usp=sharing";
+  const response = await fetch(url);
+  const text = await response.text();
+  const rows = text.split("\n").map(r => r.split(","));
+  
+  const products = {};
+  rows.slice(1).forEach(r => {
+    const id = r[0];
+    products[id] = {
+      name: r[1],
+      image: r[2],
+      link: r[3]
+    };
+  });
+  return products;
+}
+
+async function searchProduct() {
+  const id = document.getElementById("productId").value.trim();
+  const products = await loadProducts();
+  const product = products[id];
+  const resultArea = document.getElementById("resultArea");
+
+  if (product) {
+    resultArea.innerHTML = `
+      <div class="result">
+        <h3>Product ID ${id}</h3>
+        <img src="${product.image}" alt="${product.name}">
+        <div><strong>${product.name}</strong></div>
+        <a class="buy-btn" href="${product.link}" target="_blank">Buy Now</a>
+      </div>
+    `;
+  } else {
+    resultArea.innerHTML = `<p>Product not found. Please check the ID.</p>`;
+  }
+}
+</script>
+
+</body>
+</html>
