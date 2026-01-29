@@ -1,3 +1,109 @@
+!DOCTYPE html
+html lang=en
+head
+  meta charset=UTF-8
+  titleClickThatLinkstitle
+  style
+    body {
+      font-family sans-serif;
+      background-color #fdf8f3;
+      text-align center;
+      padding 40px;
+    }
+    .logo {
+      font-size 28px;
+      font-weight bold;
+      margin-bottom 10px;
+    }
+    .tagline {
+      font-size 16px;
+      color #555;
+      margin-bottom 30px;
+    }
+    input[type=text] {
+      padding 10px;
+      width 250px;
+      border 1px solid #ccc;
+      border-radius 6px;
+    }
+    button {
+      padding 10px 20px;
+      background-color #fdd835;
+      border none;
+      border-radius 6px;
+      font-weight bold;
+      cursor pointer;
+    }
+    .result {
+      margin-top 30px;
+      border 1px solid #ddd;
+      padding 20px;
+      border-radius 8px;
+      background-color #fff;
+      display inline-block;
+    }
+    .result img {
+      width 150px;
+      margin-bottom 10px;
+    }
+    .buy-btn {
+      display block;
+      margin-top 10px;
+      padding 10px;
+      background-color #e53935;
+      color white;
+      text-decoration none;
+      border-radius 6px;
+      font-weight bold;
+    }
+  style
+head
+body
+
+  div class=logoCLICKTHATLINKSdiv
+  div class=taglineFind your product fastdiv
+
+  input type=text id=productId placeholder=Enter Product ID
+  button onclick=searchProduct()Searchbutton
+
+  div id=resultAreadiv
+
+  script
+    const products = {
+      001 {
+        name Smart Drill,
+        image httpsexample.comdrill.jpg,
+        link httpsamazon.comaffiliate-link-001
+      },
+      002 {
+        name Mini Blender,
+        image httpsexample.comblender.jpg,
+        link httpsebay.comaffiliate-link-002
+      }
+    };
+
+    function searchProduct() {
+      const id = document.getElementById(productId).value.trim();
+      const product = products[id];
+      const resultArea = document.getElementById(resultArea);
+
+      if (product) {
+        resultArea.innerHTML = `
+          div class=result
+            h3Product ID ${id}h3
+            img src=${product.image} alt=${product.name}
+            divstrong${product.name}strongdiv
+            a class=buy-btn href=${product.link} target=_blankBuy Nowa
+          div
+        `;
+      } else {
+        resultArea.innerHTML = `pProduct not found. Please check the ID.p`;
+      }
+    }
+  script
+
+body
+html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,149 +111,233 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ClickThatLinks</title>
   <style>
-    /* Reset basic style */
     * {
-      margin: 0;
-      padding: 0;
       box-sizing: border-box;
     }
-
     body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
-      color: #333;
-      line-height: 1.6;
-      padding: 20px;
-    }
-
-    h1 {
+      font-family: sans-serif;
+      background-color: #fdf8f3;
       text-align: center;
-      margin-bottom: 20px;
+      padding: 40px 20px;
+      margin: 0;
     }
-
-    /* Search container */
-    .search-container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 20px;
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 10px;
     }
-
-    .search-container input,
-    .search-container button {
-      width: 100%;
-      padding: 12px;
+    .tagline {
       font-size: 16px;
+      color: #555;
+      margin-bottom: 30px;
+    }
+    .search-form {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    input[type="text"] {
+      padding: 12px;
+      width: 100%;
+      max-width: 250px;
       border: 1px solid #ccc;
       border-radius: 6px;
+      font-size: 16px;
     }
-
-    .search-container button {
-      background: #007bff;
-      color: #fff;
+    button {
+      padding: 12px 24px;
+      background-color: #fdd835;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
       cursor: pointer;
+      font-size: 16px;
+      touch-action: manipulation;
     }
-
-    .search-container button:hover {
-      background: #0056b3;
+    button:hover {
+      background-color: #fbc02d;
     }
-
-    /* Product result card */
+    button:active {
+      background-color: #f9a825;
+    }
     .result {
-      background: #fff;
+      margin-top: 30px;
+      border: 1px solid #ddd;
+      padding: 20px;
       border-radius: 8px;
-      padding: 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      text-align: center;
-      margin-bottom: 20px;
+      background-color: #fff;
+      display: inline-block;
+      max-width: 90%;
+      width: 300px;
     }
-
     .result img {
       width: 100%;
+      max-width: 150px;
       height: auto;
-      border-radius: 8px;
       margin-bottom: 10px;
     }
-
-    .result h3 {
-      margin-bottom: 10px;
-    }
-
     .buy-btn {
-      display: inline-block;
-      padding: 10px 15px;
-      background: #28a745;
-      color: #fff;
-      border-radius: 6px;
+      display: block;
+      margin-top: 10px;
+      padding: 12px;
+      background-color: #e53935;
+      color: white;
       text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 16px;
     }
-
     .buy-btn:hover {
-      background: #218838;
+      background-color: #c62828;
+    }
+    .buy-btn:active {
+      background-color: #b71c1c;
+    }
+    .error {
+      color: #e53935;
+      margin-top: 20px;
+    }
+    .loading {
+      color: #555;
+      margin-top: 20px;
     }
 
-    /* Responsive layout */
-    @media (min-width: 768px) {
-      .search-container {
-        flex-direction: row;
+    /* Mobile-specific styles */
+    @media (max-width: 480px) {
+      body {
+        padding: 20px 15px;
       }
-      .search-container input {
-        flex: 1;
+      .logo {
+        font-size: 24px;
       }
-      .search-container button {
-        width: auto;
+      .tagline {
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+      .search-form {
+        flex-direction: column;
+        align-items: center;
+      }
+      input[type="text"] {
+        max-width: 100%;
+      }
+      button {
+        width: 100%;
+        max-width: 250px;
       }
       .result {
-        max-width: 600px;
-        margin: 0 auto;
+        width: 100%;
+        max-width: 100%;
+        padding: 15px;
+      }
+      .result img {
+        max-width: 120px;
       }
     }
   </style>
 </head>
 <body>
-  <h1>ClickThatLinks 🛒</h1>
-  <div class="search-container">
+
+  <div class="logo">CLICKTHATLINKS</div>
+  <div class="tagline">Find your product fast</div>
+
+  <div class="search-form">
     <input type="text" id="productId" placeholder="Enter Product ID">
     <button onclick="searchProduct()">Search</button>
   </div>
+
   <div id="resultArea"></div>
 
   <script>
-    const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdW9xMAPS-7X1PHLBkwQdaV3yBokZzmpmT61uDk4s3zbTcENvboK5qFrzNWbMykfJ-SNUzoz-3Wxqk/pub?output=csv";
+// Google Sheets ID extracted from the URL
+const SHEET_ID = "1mA0IUMZ5CeR_SEkuBZLetdpuUlyttcaSQEaTbHkp9Io";
 
-    async function loadProducts() {
-      const response = await fetch(url);
-      const data = await response.text();
-      const rows = data.split("\n").map(row => row.split(","));
-      const products = {};
-      rows.forEach(row => {
-        const [id, name, image, link] = row;
-        if (id && name && image && link) {
-          products[id.trim()] = { name, image, link };
-        }
-      });
-      return products;
-    }
+// Use the published CSV export URL format for Google Sheets
+// Note: The sheet must be published to web for this to work
+// (File > Share > Publish to web > CSV)
+function getSheetUrl() {
+  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
+}
 
-    async function searchProduct() {
-      const id = document.getElementById("productId").value.trim();
-      const products = await loadProducts();
-      const product = products[id];
-      const resultArea = document.getElementById("resultArea");
+async function loadProducts() {
+  const url = getSheetUrl();
+  const response = await fetch(url);
 
-      if (product) {
-        resultArea.innerHTML = `
-          <div class="result">
-            <h3>Product ID ${id}</h3>
-            <img src="${product.image}" alt="${product.name}">
-            <div><strong>${product.name}</strong></div>
-            <a class="buy-btn" href="${product.link}" target="_blank">Buy Now</a>
-          </div>
-        `;
+  if (!response.ok) {
+    throw new Error("Failed to load products. Make sure the Google Sheet is published to web.");
+  }
+
+  const text = await response.text();
+  const rows = text.split("\n").map(r => {
+    // Handle CSV parsing with potential commas in values
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < r.length; i++) {
+      const char = r[i];
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        result.push(current.trim());
+        current = '';
       } else {
-        resultArea.innerHTML = `<p>Product not found. Please check the ID.</p>`;
+        current += char;
       }
     }
-  </script>
+    result.push(current.trim());
+    return result;
+  });
+
+  const products = {};
+  rows.slice(1).forEach(r => {
+    if (r.length >= 4 && r[0]) {
+      const id = r[0];
+      products[id] = {
+        name: r[1],
+        image: r[2],
+        link: r[3]
+      };
+    }
+  });
+  return products;
+}
+
+async function searchProduct() {
+  const id = document.getElementById("productId").value.trim();
+  const resultArea = document.getElementById("resultArea");
+
+  if (!id) {
+    resultArea.innerHTML = `<p class="error">Please enter a Product ID.</p>`;
+    return;
+  }
+
+  resultArea.innerHTML = `<p class="loading">Searching...</p>`;
+
+  try {
+    const products = await loadProducts();
+    const product = products[id];
+
+    if (product) {
+      resultArea.innerHTML = `
+        <div class="result">
+          <h3>Product ID ${id}</h3>
+          <img src="${product.image}" alt="${product.name}">
+          <div><strong>${product.name}</strong></div>
+          <a class="buy-btn" href="${product.link}" target="_blank">Buy Now</a>
+        </div>
+      `;
+    } else {
+      resultArea.innerHTML = `<p class="error">Product not found. Please check the ID.</p>`;
+    }
+  } catch (error) {
+    resultArea.innerHTML = `<p class="error">Error loading products: ${error.message}</p>`;
+  }
+}
+</script>
+
 </body>
 </html>
