@@ -70,7 +70,7 @@
 
   <script>
 async function loadProducts() {
-  const url = "https://docs.google.com/spreadsheets/d/1mA0IUMZ5CeR_SEkuBZLetdpuUlyttcaSQEaTbHkp9Io/edit?usp=sharing";
+  const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdW9xMAPS-7X1PHLBkwQdaV3yBokZzmpmT61uDk4s3zbTcENvboK5qFrzNWbMykfJ-SNUzoz-3Wxqk/pub?output=csv";
   const response = await fetch(url);
   const text = await response.text();
   const rows = text.split("\n").map(r => r.split(","));
