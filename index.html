@@ -182,20 +182,31 @@ async function loadProducts() {
     }
 
     async function searchProduct() {
-      const id = document.getElementById("productId").value.trim();
+      const id = document.getElementById("productQuery").value.trim();
       const resultArea = document.getElementById("resultArea");
-      if (!id) {
-        resultArea.innerHTML = `<p class="error">Please enter a Product ID.</p>`;
+      if (!query) {
+        resultArea.innerHTML = `<p class="error">Please enter a Product ID or Name.</p>`;
         return;
       }
       resultArea.innerHTML = `<p class="loading">Searching...</p>`;
       try {
         const products = await loadProducts();
-        const product = products[id];
+        let product = products[query];
+            // kalau tak jumpa ID, check by name
+    if (!product) {
+      for (const id in products) {
+        if (products[id].name.toLowerCase().includes(query)) {
+          product = products[id];
+          product.id = id;
+          break;
+        }
+      }
+    }
+
         if (product) {
           resultArea.innerHTML = `
             <div class="result">
-              <h3>Product ID ${id}</h3>
+              <h3>Product ID ${id || query}</h3>
               <img src="${product.image}" alt="${product.name}">
               <div><strong>${product.name}</strong></div>
               <a class="buy-btn" href="${product.us}" target="_blank">Buy on Amazon.com</a>
