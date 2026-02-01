@@ -160,39 +160,22 @@ function getSheetUrl() {
   return `https://docs.google.com/spreadsheets/d/e/2PACX-1vTdW9xMAPS-7X1PHLBkwQdaV3yBokZzmpmT61uDk4s3zbTcENvboK5qFrzNWbMykfJ-SNUzoz-3Wxqk/pub?gid=0&single=true&output=csv`;
 }
 
-async function loadProducts() {
-      const response = await fetch(getSheetUrl());
-      const text = await response.text();
-      const rows = text.split("\n").map(r => r.split(","));
-      const products = {};
-      rows.slice(1).forEach(r => {
-        if (r.length >= 7 && r[0]) {
-          const id = r[0];
-          products[id] = {
-            name: r[1],
-            image: r[2],
-            us: r[3],
-            ca: r[4],
-            uk: r[5],
-            de: r[6]
-          };
-        }
-      });
-      return products;
-    }
+async function searchProduct() {
+  const query = document.getElementById("productQuery").value.trim().toLowerCase();
+  const resultArea = document.getElementById("resultArea");
 
-    async function searchProduct() {
-      const id = document.getElementById("productQuery").value.trim();
-      const resultArea = document.getElementById("resultArea");
-      if (!query) {
-        resultArea.innerHTML = `<p class="error">Please enter a Product ID or Name.</p>`;
-        return;
-      }
-      resultArea.innerHTML = `<p class="loading">Searching...</p>`;
-      try {
-        const products = await loadProducts();
-        let product = products[query];
-            // kalau tak jumpa ID, check by name
+  if (!query) {
+    resultArea.innerHTML = `<p class="error">Please enter a Product ID or Name.</p>`;
+    return;
+  }
+
+  resultArea.innerHTML = `<p class="loading">Searching...</p>`;
+
+  try {
+    const products = await loadProducts();
+    let product = products[query]; // check by ID first
+
+    // kalau tak jumpa ID, check by name
     if (!product) {
       for (const id in products) {
         if (products[id].name.toLowerCase().includes(query)) {
@@ -203,25 +186,25 @@ async function loadProducts() {
       }
     }
 
-        if (product) {
-          resultArea.innerHTML = `
-            <div class="result">
-              <h3>Product ID ${id || query}</h3>
-              <img src="${product.image}" alt="${product.name}">
-              <div><strong>${product.name}</strong></div>
-              <a class="buy-btn" href="${product.us}" target="_blank">Buy on Amazon.com</a>
-              <a class="buy-btn" href="${product.ca}" target="_blank">Buy on Amazon.ca</a>
-              <a class="buy-btn" href="${product.uk}" target="_blank">Buy on Amazon.co.uk</a>
-              <a class="buy-btn" href="${product.de}" target="_blank">Buy on Amazon.de</a>
-            </div>
-          `;
-        } else {
-          resultArea.innerHTML = `<p class="error">Product not found. Please check the ID.</p>`;
-        }
-      } catch (error) {
-        resultArea.innerHTML = `<p class="error">Error loading products: ${error.message}</p>`;
-      }
+    if (product) {
+      resultArea.innerHTML = `
+        <div class="result">
+          <h3>Product ID ${product.id || query}</h3>
+          <img src="${product.image}" alt="${product.name}">
+          <div><strong>${product.name}</strong></div>
+          <a class="buy-btn" href="${product.us}" target="_blank">Buy on Amazon.com</a>
+          <a class="buy-btn" href="${product.ca}" target="_blank">Buy on Amazon.ca</a>
+          <a class="buy-btn" href="${product.uk}" target="_blank">Buy on Amazon.co.uk</a>
+          <a class="buy-btn" href="${product.de}" target="_blank">Buy on Amazon.de</a>
+        </div>
+      `;
+    } else {
+      resultArea.innerHTML = `<p class="error">Product not found. Please check the ID or Name.</p>`;
     }
+  } catch (error) {
+    resultArea.innerHTML = `<p class="error">Error loading products: ${error.message}</p>`;
+  }
+}
   </script>
 
 </body>
