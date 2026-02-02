@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -142,7 +143,7 @@
   <div class="tagline">Find your product fast</div>
 
   <div class="search-form">
-    <input type="text" id="productQuery" placeholder="Enter Product ID or Name">
+    <input type="text" id="productId" placeholder="Enter Product ID or Name">
     <button onclick="searchProduct()">Search</button>
   </div>
 
@@ -150,46 +151,66 @@
 
   <script>
 // Google Sheets ID extracted from the URL
-const SHEET_ID = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdW9xMAPS-7X1PHLBkwQdaV3yBokZzmpmT61uDk4s3zbTcENvboK5qFrzNWbMykfJ-SNUzoz-3Wxqk/pub?output=csv";
+const SHEET_ID = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdW9xMAPS-7X1PHLBkwQdaV3yBokZzmpmT61uDk4s3zbTcENvboK5qFrzNWbMykfJ-SNUzoz-3Wxqk/pub?gid=0&single=true&output=csv";
 
 // Use the published CSV export URL format for Google Sheets
 // Note: The sheet must be published to web for this to work
 // (File > Share > Publish to web > CSV)
 function getSheetUrl() {
-  return `https://docs.google.com/spreadsheets/d/e/2PACX-1vTdW9xMAPS-7X1PHLBkwQdaV3yBokZzmpmT61uDk4s3zbTcENvboK5qFrzNWbMykfJ-SNUzoz-3Wxqk/pub?output=csv`;
+  return `https://docs.google.com/spreadsheets/d/e/2PACX-1vTdW9xMAPS-7X1PHLBkwQdaV3yBokZzmpmT61uDk4s3zbTcENvboK5qFrzNWbMykfJ-SNUzoz-3Wxqk/pub?gid=0&single=true&output=csv`;
 }
 
-async function searchProduct() {
-  const id = document.getElementById("productId").value.trim();
-  const resultArea = document.getElementById("resultArea");
-
-  if (!id) {
-    resultArea.innerHTML = `<p class="error">Please enter a Product ID.</p>`;
-    return;
-  }
-
-  resultArea.innerHTML = `<p class="loading">Searching...</p>`;
-
-  try {
-    const products = await loadProducts();
-    const product = products[id];
-
-    if (product) {
-      resultArea.innerHTML = `
-        <div class="result">
-          <h3>Product ID ${id}</h3>
-          <img src="${product.image}" alt="${product.name}">
-          <div><strong>${product.name}</strong></div>
-          <a class="buy-btn" href="${product.link}" target="_blank">Buy Now</a>
-        </div>
-      `;
-    } else {
-      resultArea.innerHTML = `<p class="error">Product not found. Please check the ID.</p>`;
+async function loadProducts() {
+      const response = await fetch(getSheetUrl());
+      const text = await response.text();
+      const rows = text.split("\n").map(r => r.split(","));
+      const products = {};
+      rows.slice(1).forEach(r => {
+        if (r.length >= 7 && r[0]) {
+          const id = r[0];
+          products[id] = {
+            name: r[1],
+            image: r[2],
+            us: r[3],
+            ca: r[4],
+            uk: r[5],
+            de: r[6]
+          };
+        }
+      });
+      return products;
     }
-  } catch (error) {
-    resultArea.innerHTML = `<p class="error">Error loading products: ${error.message}</p>`;
-  }
-}
+
+    async function searchProduct() {
+      const id = document.getElementById("productId").value.trim();
+      const resultArea = document.getElementById("resultArea");
+      if (!id) {
+        resultArea.innerHTML = `<p class="error">Please enter a Product ID.</p>`;
+        return;
+      }
+      resultArea.innerHTML = `<p class="loading">Searching...</p>`;
+      try {
+        const products = await loadProducts();
+        const product = products[id];
+        if (product) {
+          resultArea.innerHTML = `
+            <div class="result">
+              <h3>Product ID ${id}</h3>
+              <img src="${product.image}" alt="${product.name}">
+              <div><strong>${product.name}</strong></div>
+              <a class="buy-btn" href="${product.us}" target="_blank">Buy on Amazon.com</a>
+              <a class="buy-btn" href="${product.ca}" target="_blank">Buy on Amazon.ca</a>
+              <a class="buy-btn" href="${product.uk}" target="_blank">Buy on Amazon.co.uk</a>
+              <a class="buy-btn" href="${product.de}" target="_blank">Buy on Amazon.de</a>
+            </div>
+          `;
+        } else {
+          resultArea.innerHTML = `<p class="error">Product not found. Please check the ID.</p>`;
+        }
+      } catch (error) {
+        resultArea.innerHTML = `<p class="error">Error loading products: ${error.message}</p>`;
+      }
+    }
   </script>
 
 </body>
