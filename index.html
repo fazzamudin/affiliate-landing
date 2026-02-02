@@ -160,6 +160,50 @@ function getSheetUrl() {
   return `https://docs.google.com/spreadsheets/d/e/2PACX-1vTdW9xMAPS-7X1PHLBkwQdaV3yBokZzmpmT61uDk4s3zbTcENvboK5qFrzNWbMykfJ-SNUzoz-3Wxqk/pub?gid=0&single=true&output=csv`;
 }
 
+async function loadProducts() {
+  const url = getSheetUrl();
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error("Failed to load products. Make sure the Google Sheet is published to web.");
+  }
+
+  const text = await response.text();
+  const rows = text.split("\n").map(r => {
+    // Handle CSV parsing with potential commas in values
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < r.length; i++) {
+      const char = r[i];
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        result.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    result.push(current.trim());
+    return result;
+  });
+
+  const products = {};
+  rows.slice(1).forEach(r => {
+    if (r.length >= 4 && r[0]) {
+      const id = r[0];
+      products[id] = {
+        name: r[1],
+        image: r[2],
+        link: r[3]
+      };
+    }
+  });
+  return products;
+}
+
 async function searchProduct() {
   const id = document.getElementById("productId").value.trim();
   const resultArea = document.getElementById("resultArea");
