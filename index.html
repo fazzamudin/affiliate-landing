@@ -161,11 +161,11 @@ function getSheetUrl() {
 }
 
 async function searchProduct() {
-  const query = document.getElementById("productQuery").value.trim().toLowerCase();
+  const id = document.getElementById("productId").value.trim();
   const resultArea = document.getElementById("resultArea");
 
-  if (!query) {
-    resultArea.innerHTML = `<p class="error">Please enter a Product ID or Name.</p>`;
+  if (!id) {
+    resultArea.innerHTML = `<p class="error">Please enter a Product ID.</p>`;
     return;
   }
 
@@ -173,33 +173,19 @@ async function searchProduct() {
 
   try {
     const products = await loadProducts();
-    let product = products[query]; // check by ID first
-
-    // kalau tak jumpa ID, check by name
-    if (!product) {
-      for (const id in products) {
-        if (products[id].name.toLowerCase().includes(query)) {
-          product = products[id];
-          product.id = id;
-          break;
-        }
-      }
-    }
+    const product = products[id];
 
     if (product) {
       resultArea.innerHTML = `
         <div class="result">
-          <h3>Product ID ${product.id || query}</h3>
+          <h3>Product ID ${id}</h3>
           <img src="${product.image}" alt="${product.name}">
           <div><strong>${product.name}</strong></div>
-          <a class="buy-btn" href="${product.us}" target="_blank">Buy on Amazon.com</a>
-          <a class="buy-btn" href="${product.ca}" target="_blank">Buy on Amazon.ca</a>
-          <a class="buy-btn" href="${product.uk}" target="_blank">Buy on Amazon.co.uk</a>
-          <a class="buy-btn" href="${product.de}" target="_blank">Buy on Amazon.de</a>
+          <a class="buy-btn" href="${product.link}" target="_blank">Buy Now</a>
         </div>
       `;
     } else {
-      resultArea.innerHTML = `<p class="error">Product not found. Please check the ID or Name.</p>`;
+      resultArea.innerHTML = `<p class="error">Product not found. Please check the ID.</p>`;
     }
   } catch (error) {
     resultArea.innerHTML = `<p class="error">Error loading products: ${error.message}</p>`;
