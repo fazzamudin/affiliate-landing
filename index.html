@@ -142,12 +142,22 @@
   <div class="logo"><img src="Click That Links.svg" alt="Click That Links"></div>
   <div class="tagline">Find your product fast</div>
 
-  <div class="search-form">
-    <input type="text" id="productId" placeholder="Enter Product ID">
+ <div class="search-form">
+    <input type="text" id="productQuery" placeholder="Enter Product ID or Name">
     <button onclick="searchProduct()">Search</button>
   </div>
 
+  <h2>Shop by Categories</h2>
+
+  <div class="category-bar">
+    <button onclick="filterCategory('Home')">Home</button>
+    <button onclick="filterCategory('Kitchen Tools')">Kitchen Tools</button>
+    <button onclick="filterCategory('Gaming')">Gaming</button>
+  </div>
+
   <div id="resultArea"></div>
+
+
 
   <script>
 // Google Sheets ID extracted from the URL
@@ -160,81 +170,60 @@ function getSheetUrl() {
   return `https://docs.google.com/spreadsheets/d/e/2PACX-1vTdW9xMAPS-7X1PHLBkwQdaV3yBokZzmpmT61uDk4s3zbTcENvboK5qFrzNWbMykfJ-SNUzoz-3Wxqk/pub?gid=0&single=true&output=csv`;
 }
 
-async function loadProducts() {
-  const url = getSheetUrl();
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error("Failed to load products. Make sure the Google Sheet is published to web.");
-  }
-
-  const text = await response.text();
-  const rows = text.split("\n").map(r => {
-    // Handle CSV parsing with potential commas in values
-    const result = [];
-    let current = '';
-    let inQuotes = false;
-
-    for (let i = 0; i < r.length; i++) {
-      const char = r[i];
-      if (char === '"') {
-        inQuotes = !inQuotes;
-      } else if (char === ',' && !inQuotes) {
-        result.push(current.trim());
-        current = '';
-      } else {
-        current += char;
+ async function loadProducts() {
+      const response = await fetch(SHEET_URL);
+      const text = await response.text();
+      const rows = text.split("\n").map(r => r.split(","));
+      const products = [];
+      for (let i = 1; i < rows.length; i++) {
+        const [id, name, image, link, category] = rows[i];
+        products.push({ id, name, image, link, category });
       }
+      return products;
     }
-    result.push(current.trim());
-    return result;
-  });
 
-  const products = {};
-  rows.slice(1).forEach(r => {
-    if (r.length >= 4 && r[0]) {
-      const id = r[0];
-      products[id] = {
-        name: r[1],
-        image: r[2],
-        link: r[3]
-      };
+    async function searchProduct() {
+      const query = document.getElementById("productQuery").value.trim().toLowerCase();
+      const resultArea = document.getElementById("resultArea");
+      resultArea.innerHTML = "<p>Searching...</p>";
+      const products = await loadProducts();
+      const filtered = products.filter(p =>
+        p.id.toLowerCase() === query || p.name.toLowerCase().includes(query)
+      );
+      displayProducts(filtered, resultArea);
     }
-  });
-  return products;
-}
 
-async function searchProduct() {
-  const id = document.getElementById("productId").value.trim();
-  const resultArea = document.getElementById("resultArea");
+    async function filterCategory(category) {
+      const resultArea = document.getElementById("resultArea");
+      resultArea.innerHTML = `<p>Loading ${category} products...</p>`;
+      const products = await loadProducts();
+      const filtered = products.filter(p => p.category === category);
+      displayProducts(filtered, resultArea);
+    }
 
-  if (!id) {
-    resultArea.innerHTML = `<p class="error">Please enter a Product ID.</p>`;
-    return;
-  }
+    function showCategoryProducts(category) {
+      const resultArea = document.getElementById("resultArea");
+      resultArea.innerHTML = `<p>Loading all ${category} products...</p>`;
+      loadProducts().then(products => {
+        const filtered = products.filter(p => p.category === category);
+        displayProducts(filtered, resultArea);
+      });
+    }
 
-  resultArea.innerHTML = `<p class="loading">Searching...</p>`;
-
-  try {
-    const products = await loadProducts();
-    const product = products[id];
-
-    if (product) {
-      resultArea.innerHTML = `
-        <div class="result">
-          <h3>Product ID ${id}</h3>
-          <img src="${product.image}" alt="${product.name}">
-          <div><strong>${product.name}</strong></div>
-          <a class="buy-btn" href="${product.link}" target="_blank">Buy Now</a>
+    function displayProducts(products, resultArea) {
+      if (products.length === 0) {
+        resultArea.innerHTML = "<p>No products found.</p>";
+        return;
+      }
+      resultArea.innerHTML = products.map(p => `
+        <div class="product-card">
+          <img src="${p.image}" alt="${p.name}">
+          <h3>${p.name}</h3>
+          <a class="see-more-btn" href="#" onclick="showCategoryProducts('${p.category}')">See More</a>
         </div>
-      `;
-    } else {
-      resultArea.innerHTML = `<p class="error">Product not found. Please check the ID.</p>`;
+      `).join("");
     }
-  } catch (error) {
-    resultArea.innerHTML = `<p class="error">Error loading products: ${error.message}</p>`;
-  }
-}
+
   </script>
 
 </body>
