@@ -151,13 +151,13 @@
 
   <script>
 // Google Sheets ID extracted from the URL
-const SHEET_ID = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdW9xMAPS-7X1PHLBkwQdaV3yBokZzmpmT61uDk4s3zbTcENvboK5qFrzNWbMykfJ-SNUzoz-3Wxqk/pub?gid=0&single=true&output=csv";
+const SHEET_ID = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdW9xMAPS-7X1PHLBkwQdaV3yBokZzmpmT61uDk4s3zbTcENvboK5qFrzNWbMykfJ-SNUzoz-3Wxqk/pub?output=csv";
 
 // Use the published CSV export URL format for Google Sheets
 // Note: The sheet must be published to web for this to work
 // (File > Share > Publish to web > CSV)
 function getSheetUrl() {
-  return `https://docs.google.com/spreadsheets/d/e/2PACX-1vTdW9xMAPS-7X1PHLBkwQdaV3yBokZzmpmT61uDk4s3zbTcENvboK5qFrzNWbMykfJ-SNUzoz-3Wxqk/pub?gid=0&single=true&output=csv`;
+  return `https://docs.google.com/spreadsheets/d/e/2PACX-1vTdW9xMAPS-7X1PHLBkwQdaV3yBokZzmpmT61uDk4s3zbTcENvboK5qFrzNWbMykfJ-SNUzoz-3Wxqk/pub?output=csv`;
 }
 
 async function searchProduct() {
