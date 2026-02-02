@@ -1,196 +1,106 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Click That Links</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+!DOCTYPE html
+html lang=en
+head
+  meta charset=UTF-8
+  titleClickThatLinkstitle
+  style
     body {
-      font-family: sans-serif;
-      background-color: #fdf8f3;
-      text-align: center;
-      padding: 40px 20px;
-      margin: 0;
+      font-family sans-serif;
+      background-color #fdf8f3;
+      text-align center;
+      padding 40px;
     }
     .logo {
-      margin-bottom: 10px;
-    }
-    .logo img {
-      max-width: 280px;
-      width: 100%;
-      height: auto;
+      font-size 28px;
+      font-weight bold;
+      margin-bottom 10px;
     }
     .tagline {
-      font-size: 16px;
-      color: #555;
-      margin-bottom: 30px;
+      font-size 16px;
+      color #555;
+      margin-bottom 30px;
     }
-    .search-form {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      max-width: 400px;
-      margin: 0 auto;
-    }
-    input[type="text"] {
-      padding: 12px;
-      width: 100%;
-      max-width: 250px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
+    input[type=text] {
+      padding 10px;
+      width 250px;
+      border 1px solid #ccc;
+      border-radius 6px;
     }
     button {
-      padding: 12px 24px;
-      background-color: #fdd835;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 16px;
-      touch-action: manipulation;
-    }
-    button:hover {
-      background-color: #fbc02d;
-    }
-    button:active {
-      background-color: #f9a825;
+      padding 10px 20px;
+      background-color #fdd835;
+      border none;
+      border-radius 6px;
+      font-weight bold;
+      cursor pointer;
     }
     .result {
-      margin-top: 30px;
-      border: 1px solid #ddd;
-      padding: 20px;
-      border-radius: 8px;
-      background-color: #fff;
-      display: inline-block;
-      max-width: 90%;
-      width: 300px;
+      margin-top 30px;
+      border 1px solid #ddd;
+      padding 20px;
+      border-radius 8px;
+      background-color #fff;
+      display inline-block;
     }
     .result img {
-      width: 100%;
-      max-width: 150px;
-      height: auto;
-      margin-bottom: 10px;
+      width 150px;
+      margin-bottom 10px;
     }
     .buy-btn {
-      display: block;
-      margin-top: 10px;
-      padding: 12px;
-      background-color: #e53935;
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-      font-weight: bold;
-      font-size: 16px;
+      display block;
+      margin-top 10px;
+      padding 10px;
+      background-color #e53935;
+      color white;
+      text-decoration none;
+      border-radius 6px;
+      font-weight bold;
     }
-    .buy-btn:hover {
-      background-color: #c62828;
-    }
-    .buy-btn:active {
-      background-color: #b71c1c;
-    }
-    .error {
-      color: #e53935;
-      margin-top: 20px;
-    }
-    .loading {
-      color: #555;
-      margin-top: 20px;
-    }
+  style
+head
+body
 
-    /* Mobile-specific styles */
-    @media (max-width: 480px) {
-      body {
-        padding: 20px 15px;
+  div class=logoCLICKTHATLINKSdiv
+  div class=taglineFind your product fastdiv
+
+  input type=text id=productId placeholder=Enter Product ID
+  button onclick=searchProduct()Searchbutton
+
+  div id=resultAreadiv
+
+  script
+    const products = {
+      001 {
+        name Smart Drill,
+        image httpsexample.comdrill.jpg,
+        link httpsamazon.comaffiliate-link-001
+      },
+      002 {
+        name Mini Blender,
+        image httpsexample.comblender.jpg,
+        link httpsebay.comaffiliate-link-002
       }
-      .logo img {
-        max-width: 220px;
-      }
-      .tagline {
-        font-size: 14px;
-        margin-bottom: 20px;
-      }
-      .search-form {
-        flex-direction: column;
-        align-items: center;
-      }
-      input[type="text"] {
-        max-width: 100%;
-      }
-      button {
-        width: 100%;
-        max-width: 250px;
-      }
-      .result {
-        width: 100%;
-        max-width: 100%;
-        padding: 15px;
-      }
-      .result img {
-        max-width: 120px;
+    };
+
+    function searchProduct() {
+      const id = document.getElementById(productId).value.trim();
+      const product = products[id];
+      const resultArea = document.getElementById(resultArea);
+
+      if (product) {
+        resultArea.innerHTML = `
+          div class=result
+            h3Product ID ${id}h3
+            img src=${product.image} alt=${product.name}
+            divstrong${product.name}strongdiv
+            a class=buy-btn href=${product.link} target=_blankBuy Nowa
+          div
+        `;
+      } else {
+        resultArea.innerHTML = `pProduct not found. Please check the ID.p`;
       }
     }
-  </style>
-</head>
-<body>
+  script
 
-  <div class="logo"><img src="Click That Links.svg" alt="Click That Links"></div>
-  <div class="tagline">Find your product fast</div>
-
-  <div class="search-form">
-    <input type="text" id="productid" placeholder="Enter Product ID">
-    <button onclick="searchProduct()">Search</button>
-  </div>
-
-  <div id="resultArea"></div>
-
-  <script>
-// Google Sheets ID extracted from the URL
-const SHEET_ID = "https://docs.google.com/spreadsheet";
-
-// Use the published CSV export URL format for Google Sheets
-// Note: The sheet must be published to web for this to work
-// (File > Share > Publish to web > CSV)
-function getSheetUrl() {
-  return `https://docs.google.com/spreadsheet`;
-}
-
-async function searchProduct() {
-  const id = document.getElementById("productId").value.trim();
-  const resultArea = document.getElementById("resultArea");
-
-  if (!id) {
-    resultArea.innerHTML = `<p class="error">Please enter a Product ID.</p>`;
-    return;
-  }
-
-  resultArea.innerHTML = `<p class="loading">Searching...</p>`;
-
-  try {
-    const products = await loadProducts();
-    const product = products[id];
-
-    if (product) {
-      resultArea.innerHTML = `
-        <div class="result">
-          <h3>Product ID ${id}</h3>
-          <img src="${product.image}" alt="${product.name}">
-          <div><strong>${product.name}</strong></div>
-          <a class="buy-btn" href="${product.link}" target="_blank">Buy Now</a>
-        </div>
-      `;
-    } else {
-      resultArea.innerHTML = `<p class="error">Product not found. Please check the ID.</p>`;
-    }
-  } catch (error) {
-    resultArea.innerHTML = `<p class="error">Error loading products: ${error.message}</p>`;
-  }
-}
-  </script>
-
-</body>
-</html>
+body
+html
